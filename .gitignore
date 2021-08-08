@@ -1,3 +1,8 @@
+data/
+bin/
+pyvenv.cfg
+
+# Intialised by github
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
