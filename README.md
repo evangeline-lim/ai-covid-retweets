@@ -1,17 +1,22 @@
 # ai-covid-retweets
 
 ## Setup virtual environment
-`virtualenv -p Python3 .`
-`source bin/activate`
-`pip install -r requirements.txt`
+```
+virtualenv -p Python3 .
+source bin/activate
+pip install -r requirements.txt
+```
 
 ### Order of running
-preprocess.py
-random_forest_training.py
-split_data.py
-neural_network.py
-neural_network2.py
-neural_network3.py
+```
+python3 preprocess.py
+python3 random_forest_training.py
+python3 split_data.py
+python3 neural_network.py
+python3 neural_network2.py
+python3 neural_network3.py
+python3 script.py
+```
 
 ### Run Script
 `python3 script.py`
