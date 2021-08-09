@@ -8,7 +8,13 @@
 ### Order of running
 preprocess.py
 random_forest_training.py
+split_data.py
+neural_network.py
+neural_network2.py
+neural_network3.py
 
+### Run Script
+`python3 script.py`
 
 ## Run flask api service
 `FLASK_ENV=development FLASK_APP=app.py flask run`
