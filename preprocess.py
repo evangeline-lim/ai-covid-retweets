@@ -22,6 +22,18 @@ def count_mentions_hashtags(s):
 dataset['mentions'] = dataset.apply(lambda row : count_mentions_hashtags(str(row['mentions'])), axis = 1)
 dataset['hashtags'] = dataset.apply(lambda row : count_mentions_hashtags(str(row['hashtags'])), axis = 1)
 
+# Count Entities
+dataset['entity_names'] = dataset['entities'].str.findall('(:\w+)')
+dataset['entity_names'] = [[b.replace(":", "") for b in a] for a in dataset.entity_names]
+
+def count_entities(s):
+  if s == "null;":
+    return 0
+  else:
+    return s.count(';')
+
+dataset['entities'] = dataset.apply(lambda row : count_entities(str(row['entities'])), axis = 1)
+
 # Count URLs
 dataset['urls'] = dataset.apply(lambda row : str(row['urls']).count(':-:'), axis = 1)
 
