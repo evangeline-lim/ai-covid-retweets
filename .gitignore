@@ -1,6 +1,7 @@
 data/
 bin/
 pyvenv.cfg
+.DS_Store
 
 # Intialised by github
 # Byte-compiled / optimized / DLL files
