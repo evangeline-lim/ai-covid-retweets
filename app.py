@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, reqparse
 app = Flask(__name__)
 api = Api(app)
 
@@ -25,36 +25,11 @@ print("Loaded model from disk")
 scaler_x_1 = joblib.load('data/scaler_x_1.save')
 scaler_y_1 = joblib.load('data/scaler_y_1.save')
 
-@app.route('/')
-def hello_world():
-    return jsonify({'Hello':'World!'})
-    # return 'Hello, World!'
-
-@app.route('/query-example')
-def query_example():
-    followers = request.args.get('followers')
-    print(type(followers))
-    return followers
-    # return '''<h1>The followers value is: {}</h1>'''.format(followers)
-    # return 'Query String Example'
-
-'''X: followers, friends, favorites, mentions, hashtags, urls, sentistrength'''
-query = np.array([0,0,0,0,0,0,0,0])
-@app.route('/hi')
-def predict_group():
-    test = query.reshape(1,-1)
+def predict_grp(test):
     y_pred = clf.predict(test)
-    return 'Retweet class: ' + str(y_pred[0])
+    return y_pred[0]
 
-    # # evaluate loaded model on test data
-    # loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    # score = loaded_model.evaluate(X, Y, verbose=0)
-    # print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
-    # return str(score[1]*100)
-
-
-def predict_retweet():
-    test = query.reshape(1,-1)
+def predict_retweet_grp1(test):
     print(test)
     test_scaled = scaler_x_1.transform(test)
     print(test_scaled)
@@ -64,7 +39,41 @@ def predict_retweet():
     print(y_pred)
     prediction = int(y_pred[0][0])
     print(prediction)
-    return 'Final prediction: {} \n'.format(str(prediction))
+    return 'Final prediction: {}'.format(str(prediction))
+
+class HelloWorld(Resource):
+    def get(self):
+        return {'Hello':'World!'}
+
+class Test(Resource):
+    def get(self):
+        followers = request.args.get('followers', type=float)
+        friends = request.args.get('friends', type=float)
+        favorites = request.args.get('favorites', type=float)
+        entities = request.args.get('entities', type=float)
+        mentions = request.args.get('mentions', type=float)
+        hashtags = request.args.get('hashtags', type=float)
+        urls = request.args.get('urls', type=float)
+        sentistrength = request.args.get('sentistrength', type=float)
+
+        # string = '''Requested prediction for followers = {},
+        # friends = {}, entities = {}, favorites = {}, mentions = {}, 
+        # hashtags = {},' urls = {}, sentistrength = {}
+        # '''.format(followers, friends, entities, favorites, mentions, hashtags, urls, sentistrength)
+
+        query = np.array([followers, friends, entities, favorites, mentions, hashtags, urls, sentistrength]).reshape(1,-1)
+
+        grp_prediction = predict_grp(query)
+        if grp_prediction == 0:
+            return '0 retweets'
+        if grp_prediction == 1:
+            return predict_retweet_grp1(query)
+        
+        return grp_prediction
+        # return request.query_string
+
+api.add_resource(HelloWorld, '/')
+api.add_resource(Test, '/test', endpoint='test')
 
 # if __name__ == '__main__':
 #     # run app in debug mode on port 5000

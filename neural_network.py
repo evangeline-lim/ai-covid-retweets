@@ -56,7 +56,7 @@ dataset_1 = pd.read_csv('data/1_9_retweets.csv')
 x1_1 = np.column_stack((np.array(dataset_1['followers']),
                       np.array(dataset_1['friends']),
                       np.array(dataset_1['favorites']),
-                      # np.array(dataset_1['entities']),
+                      np.array(dataset_1['entities']),
                       np.array(dataset_1['mentions']),
                       np.array(dataset_1['hashtags']),
                       np.array(dataset_1['urls']),
