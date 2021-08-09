@@ -12,6 +12,7 @@ from tensorflow.python.keras.models import model_from_json
 with open('data/random_forest.pkl', 'rb') as f:
     clf = pickle.load(f)
 
+# ------------------ MODEL 1 ------------------
 # load neural network model
 json_file = open('data/model1.json', 'r')
 loaded_model_json = json_file.read()
@@ -19,26 +20,56 @@ json_file.close()
 model1 = model_from_json(loaded_model_json)
 # load weights into new model
 model1.load_weights('data/model1.h5')
-print("Loaded model from disk")
-
 # load scalers
 scaler_x_1 = joblib.load('data/scaler_x_1.save')
 scaler_y_1 = joblib.load('data/scaler_y_1.save')
+# ------------------ MODEL 2 ------------------
+# load neural network model
+json_file = open('data/model2.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+model2 = model_from_json(loaded_model_json)
+# load weights into new model
+model2.load_weights('data/model2.h5')
+# load scalers
+scaler_x_2 = joblib.load('data/scaler_x_2.save')
+scaler_y_2 = joblib.load('data/scaler_y_2.save')
+# ------------------ MODEL 3 ------------------
+# load neural network model
+json_file = open('data/model3.json', 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+model3 = model_from_json(loaded_model_json)
+# load weights into new model
+model3.load_weights('data/model3.h5')
+# load scalers
+scaler_x_3 = joblib.load('data/scaler_x_3.save')
+scaler_y_3 = joblib.load('data/scaler_y_3.save')
+print("Loaded models from disk")
 
 def predict_grp(test):
     y_pred = clf.predict(test)
     return y_pred[0]
 
 def predict_retweet_grp1(test):
-    print(test)
     test_scaled = scaler_x_1.transform(test)
-    print(test_scaled)
     y_pred_scaled = model1.predict(test_scaled)
-    print(y_pred_scaled)
     y_pred = scaler_y_1.inverse_transform(y_pred_scaled)
-    print(y_pred)
     prediction = int(y_pred[0][0])
-    print(prediction)
+    return 'Final prediction: {}'.format(str(prediction))
+
+def predict_retweet_grp2(test):
+    test_scaled = scaler_x_2.transform(test)
+    y_pred_scaled = model2.predict(test_scaled)
+    y_pred = scaler_y_2.inverse_transform(y_pred_scaled)
+    prediction = int(y_pred[0][0])
+    return 'Final prediction: {}'.format(str(prediction))
+
+def predict_retweet_grp3(test):
+    test_scaled = scaler_x_3.transform(test)
+    y_pred_scaled = model3.predict(test_scaled)
+    y_pred = scaler_y_3.inverse_transform(y_pred_scaled)
+    prediction = int(y_pred[0][0])
     return 'Final prediction: {}'.format(str(prediction))
 
 class HelloWorld(Resource):
@@ -68,9 +99,12 @@ class Test(Resource):
             return '0 retweets'
         if grp_prediction == 1:
             return predict_retweet_grp1(query)
-        
+        if grp_prediction == 2:
+            return predict_retweet_grp2(query)
+        if grp_prediction == 3:
+            return predict_retweet_grp3(query)
+
         return grp_prediction
-        # return request.query_string
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(Test, '/test', endpoint='test')
